@@ -1,0 +1,7 @@
+services:
+  logger.channel.joinbox_library:
+    parent: logger.channel_base
+    arguments: ['joinbox_library']
+  joinbox_library.helpers:
+    class: Drupal\joinbox_library\HelperService
+    arguments: []
