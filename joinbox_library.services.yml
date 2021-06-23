@@ -5,3 +5,8 @@ services:
   joinbox_library.helpers:
     class: Drupal\joinbox_library\HelperService
     arguments: []
+  joinbox_library.twig_extensions:
+    class: Drupal\joinbox_library\TwigExtension\DefaultTwigExtension
+    arguments: []
+    tags:
+      - { name: twig.extension }
