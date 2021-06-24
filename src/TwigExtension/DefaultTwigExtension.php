@@ -2,7 +2,6 @@
 
 namespace Drupal\joinbox_library\TwigExtension;
 
-
 use Drupal\joinbox_library\HelperService;
 use Twig\Extension\AbstractExtension;
 use Twig\TwigFunction;
@@ -36,7 +35,8 @@ class DefaultTwigExtension extends AbstractExtension {
    */
   public function getFunctions() {
     return [
-      new TwigFunction('getLanguageCode', [$this, 'getLanguageCode'])
+      new TwigFunction('getLanguageCode', [$this, 'getLanguageCode']),
+      new TwigFunction('isLoggedIn', [$this, 'isLoggedIn'])
     ];
   }
 
@@ -47,6 +47,15 @@ class DefaultTwigExtension extends AbstractExtension {
    */
   public function getLanguageCode() {
     return \Drupal::languageManager()->getCurrentLanguage()->getId();
+  }
+
+  /**
+   *
+   * Check if user is logged in
+   * @return bool
+   */
+  public function isLoggedIn() {
+    return \Drupal::currentUser()->isAuthenticated();
   }
 
 
