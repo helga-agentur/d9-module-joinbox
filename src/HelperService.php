@@ -2,6 +2,9 @@
 
 namespace Drupal\joinbox_library;
 
+use Drupal\node\Entity\Node;
+use Drupal\views\Views;
+
 /**
  * Class HelperService.
  */
@@ -96,5 +99,41 @@ class HelperService {
     return $url;
   }
 
+  /**
+   * Drupal Markup for our CTAs is not useful. Pass it into, get a nice split up array with url and text.
+   *
+   * @param $linkMarkupField
+   * @return array with url and text seperated | null
+   */
+  function getCleanLinkArray($linkMarkupField) {
+    $link = [];
+    if (isset($linkMarkupField[0])) {
+      $link['url'] = $linkMarkupField[0]['#url']->toString();
+      $link['text'] = $linkMarkupField[0]['#title'];
+      if (isset($linkMarkupField[0]['#options']) && isset($linkMarkupField[0]['#options']['external'])) {
+        $link['target'] = ($linkMarkupField[0]['#options']['external'] == true) ? '_blank': '_self';
+      }
+    }
+    return $link;
+  }
+
+  /**
+   * Gets a rendered view in the desired viewmode
+   *
+   * @param $viewname
+   * @param string $viewmode
+   * @param bool $ajax
+   * @param array $args
+   * @return array|null
+   */
+  function getRenderedView($viewname, $viewmode = 'default', $ajax = false, $args = null) {
+    if($view = Views::getView($viewname)) {
+      $view->setDisplay($viewmode);
+      $args ? $view->setArguments($args): null;
+      return ($ajax ? $view->preview() : $view->render());
+    }
+
+    return null;
+  }
 
 }
