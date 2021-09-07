@@ -36,7 +36,8 @@ class DefaultTwigExtension extends AbstractExtension {
   public function getFunctions() {
     return [
       new TwigFunction('getLanguageCode', [$this, 'getLanguageCode']),
-      new TwigFunction('isLoggedIn', [$this, 'isLoggedIn'])
+      new TwigFunction('isLoggedIn', [$this, 'isLoggedIn']),
+      new TwigFunction('addClasses', [$this, 'addClasses']),
     ];
   }
 
@@ -56,6 +57,15 @@ class DefaultTwigExtension extends AbstractExtension {
    */
   public function isLoggedIn() {
     return \Drupal::currentUser()->isAuthenticated();
+  }
+
+  /**
+   * Joins an array of class names to a string
+   * @param array $classes
+   * @return string
+   */
+  public function addClasses(array $classes) {
+    return trim(implode(' ', $classes));
   }
 
 
