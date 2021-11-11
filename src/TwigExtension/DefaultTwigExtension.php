@@ -2,6 +2,7 @@
 
 namespace Drupal\joinbox_library\TwigExtension;
 
+use Drupal\components\Template\Loader\ComponentsLoader;
 use Drupal\joinbox_library\HelperService;
 use Twig\Extension\AbstractExtension;
 use Twig\TwigFunction;
@@ -23,9 +24,9 @@ class DefaultTwigExtension extends AbstractExtension {
     $this->helperService = \Drupal::service('joinbox_library.helpers');
   }
 
- /**
-  * {@inheritdoc}
-  */
+  /**
+   * {@inheritdoc}
+   */
   public function getName() {
     return 'joinbox_library.twig_extensions';
   }
@@ -38,6 +39,7 @@ class DefaultTwigExtension extends AbstractExtension {
       new TwigFunction('getLanguageCode', [$this, 'getLanguageCode']),
       new TwigFunction('isLoggedIn', [$this, 'isLoggedIn']),
       new TwigFunction('addClasses', [$this, 'addClasses']),
+      new TwigFunction('fileExists', [$this, 'fileExists']),
     ];
   }
 
@@ -68,5 +70,18 @@ class DefaultTwigExtension extends AbstractExtension {
     return trim(implode(' ', $classes));
   }
 
+  /**
+   * Checks if a file exists
+   *
+   * @param string $filename Path to file. Can include twig namespace.
+   * @return bool If file exists.
+   */
+  public function fileExists(string $filename) {
+    /**
+     * @var $componentsLoader ComponentsLoader
+     */
+    $componentsLoader = \Drupal::service('components.twig.loader');
+    return $componentsLoader->exists($filename);
+  }
 
 }
