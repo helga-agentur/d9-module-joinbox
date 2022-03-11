@@ -6,6 +6,7 @@ use Drupal\components\Template\Loader\ComponentsLoader;
 use Drupal\joinbox_library\HelperService;
 use Twig\Extension\AbstractExtension;
 use Twig\TwigFunction;
+use Twig_SimpleFilter;
 
 /**
  * Class DefaultTwigExtension.
@@ -42,6 +43,62 @@ class DefaultTwigExtension extends AbstractExtension {
       new TwigFunction('fileExists', [$this, 'fileExists']),
     ];
   }
+
+  public function getFilters() {
+    return [
+      new Twig_SimpleFilter('highlightSearchTermInText', array($this, 'highlightSearchTermInText'))
+    ];
+  }
+
+  public function highlightSearchTermInText($content, $searchTerm) {
+		if (is_array($content) && isset($content[0]['#context']['value'])) {
+			$content = $content[0]['#context']['value'];
+		}
+		if (is_array($searchTerm) && isset($searchTerm['#markup'])) {
+			$searchTerm = $searchTerm['#markup'];
+		}
+		if ($searchTerm && $content) {
+			return $this->highlightSearchTerms($this->sanitizeHTML($content), $searchTerm);
+		}
+		else {
+			return $content;
+		}
+	}
+
+	public function sanitizeHTML($content) {
+		return strip_tags($content);
+	}
+
+	public function highlightSearchTerms($str, $search) {
+		$terms = explode(' ', $search);
+
+		if (!empty($terms)) {
+			foreach($terms as $term) {
+				$str = $this->highlightSearchTerm($str, $term);
+			}
+		}
+
+		return $str;
+	}
+
+	public function highlightSearchTerm($str, $search) {
+
+		$occurrences    = substr_count(strtolower($str), strtolower($search));
+		$newstring      = $str;
+		$match          = array();
+
+		for ($i = 0; $i < $occurrences; $i++) {
+
+			$match[$i] = stripos($str, $search, $i);
+			$match[$i] = substr($str, $match[$i], strlen($search));
+			$newstring = str_replace($match[$i], '[#]'.$match[$i].'[@]', $newstring);
+		}
+
+		$newstring = preg_replace('/(\[#\])+/', '<span class="marked">', $newstring);// str_replace('[#]', '<span class="marked">', $newstring);
+		$newstring = preg_replace('/(\[@\])+/', '</span>', $newstring); // str_replace('[@]', '</span>', $newstring);
+
+		return $newstring;
+	}
 
   /**
    * Get the language code
