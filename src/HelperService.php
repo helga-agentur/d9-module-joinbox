@@ -20,11 +20,14 @@ class HelperService {
   /**
    * Gets the referenced entity from a reference entity list field
    *
-   * @param $entityreference
+   * @param $entity
+   *
    * @return node or null
    */
-  function getReferencedEntity($entityreference) {
-    $referencedItems = $entityreference->referencedEntities();
+  function getReferencedEntity($entity) {
+    if (!$entity) return null;
+
+    $referencedItems = $entity->referencedEntities();
     return (sizeof($referencedItems) > 0) ? $referencedItems[0] : null;
   }
 
