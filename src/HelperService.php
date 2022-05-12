@@ -4,6 +4,7 @@ namespace Drupal\joinbox_library;
 
 use Drupal\node\Entity\Node;
 use Drupal\views\Views;
+use Drupal\Core\Url;
 
 /**
  * Class HelperService.
@@ -80,23 +81,37 @@ class HelperService {
   }
 
   /**
-   * Returns the URL for all nodes with content type system_content
-   *
    * @param $identifier
-   * @return \Drupal\Core\GeneratedUrl|string|null
+   *
+   * @return \Drupal\Core\Url|null
    * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
    * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
-   * @throws \Drupal\Core\Entity\EntityMalformedException
    */
-  function getURLofStaticContentPage($identifier) {
-    $url = null;
-    if ($nodes = \Drupal::entityTypeManager()->getStorage('node')->loadByProperties(['type' => 'page_system', 'field_identifier' => $identifier])) {
+  public function getSystemPageUrl($identifier): ?Url {
+    $url = NULL;
+    if ($nodes = \Drupal::entityTypeManager()->getStorage('node')->loadByProperties([
+      'type' => 'page_system',
+      'field_identifier' => $identifier,
+    ])) {
       //check if it has a translation
       $node = array_pop($nodes);
       $node = $this->getTranlatedEntity($node);
-      $url = $node->toUrl()->toString();
-    };
+      $url = $node->toUrl();
+    }
     return $url;
+  }
+
+  /**
+   * Returns the Generated URL string for all nodes with content type system_content
+   *
+   * @param $identifier
+   *
+   * @return \Drupal\Core\GeneratedUrl|string|null
+   * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
+   * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
+   */
+  function getURLofStaticContentPage($identifier): \Drupal\Core\GeneratedUrl|string|null {
+    return $this->getSystemPageUrl($identifier)?->toString();
   }
 
   /**
