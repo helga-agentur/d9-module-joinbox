@@ -46,9 +46,9 @@ class HelperService {
     /* @var FieldableEntityInterface $referencedEntity */
     $referencedEntity = array_pop($referencedEntities);
 
-    // check if the get method is available
-    if (in_array(FieldableEntityInterface::class, class_implements($referencedEntity))) {
-      return $referencedEntity?->get($fieldMachineName);
+    // check if there is an entity and if it implements FieldableEntityInterface (has to for the get method to work)
+    if ($referencedEntity && in_array(FieldableEntityInterface::class, class_implements($referencedEntity))) {
+      return $referencedEntity->get($fieldMachineName);
     }
 
     return NULL;
