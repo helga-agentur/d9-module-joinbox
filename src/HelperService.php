@@ -7,6 +7,7 @@ use Drupal\Core\Field\EntityReferenceFieldItemListInterface;
 use Drupal\Core\Field\FieldItemListInterface;
 use Drupal\Core\Url;
 use Drupal\node\Entity\Node;
+use Drupal\taxonomy\Entity\Term;
 use Drupal\views\Views;
 
 /**
@@ -82,6 +83,8 @@ class HelperService {
    * @param $entity
    *
    * @return mixed
+   *
+   * @deprecated fixed the typo - use new \Drupal\joinbox_library\HelperService::getTranslatedEntity instead
    */
   function getTranlatedEntity($entity, $lang = NULL) {
     if (!$lang) {
@@ -94,29 +97,44 @@ class HelperService {
   }
 
   /**
+   * Gets the translated node, fallback is original
+   *
+   * @param $entity
+   * @param string|null $lang
+   *
+   * @return mixed
+   */
+  function getTranslatedEntity($entity, string $lang = NULL) {
+    if (!$lang) {
+      $lang = strtolower(\Drupal::languageManager()->getCurrentLanguage()->getId());
+    }
+    return $entity->hasTranslation($lang) ? $entity->getTranslation($lang) : $entity;
+  }
+
+  /**
    * Gets the translated term title in current language
    *
-   * @param $term
+   * @param \Drupal\taxonomy\Entity\Term $term
+   * @param null $lang
    *
    * @return string
    */
-  function getTranslatedTermName($term, $lang = NULL) {
+  function getTranslatedTermName(Term $term, $lang = NULL): string {
     //if no langauge given, get current lang
     if (!$lang) {
       $lang = strtolower(\Drupal::languageManager()->getCurrentLanguage()->getId());
     }
-    $translatedTermName = $term->hasTranslation($lang) ? $term->getTranslation($lang)->getName() : $term->getName();
-    return $translatedTermName;
+    return $term->hasTranslation($lang) ? $term->getTranslation($lang)->getName() : $term->getName();
   }
 
   /**
    * Load all taxonomies of a given
    *
-   * @param $vocabulary
+   * @param string $vocabulary
    *
-   * @return array Term
+   * @return \Drupal\taxonomy\Entity\Term[]
    */
-  public function getTermsByVocabulary($vocabulary) {
+  public function getTermsByVocabulary(string $vocabulary): array {
     return $this->getTermsByProperties(['vid' => $vocabulary]);
   }
 
@@ -125,31 +143,57 @@ class HelperService {
    *
    * @param array $properties
    *
-   * @return array Term
+   * @return \Drupal\taxonomy\Entity\Term[]
    */
-  public function getTermsByProperties(array $properties) {
+  public function getTermsByProperties(array $properties): array {
     return \Drupal::service('entity_type.manager')->getStorage('taxonomy_term')->loadByProperties($properties);
   }
 
   /**
-   * @param $identifier
+   * @param string $identifier
    *
    * @return \Drupal\Core\Url|null
-   * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
-   * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
    */
-  public function getSystemPageUrl($identifier): ?Url {
-    $url = NULL;
-    if ($nodes = \Drupal::entityTypeManager()->getStorage('node')->loadByProperties([
-      'type' => 'page_system',
-      'field_identifier' => $identifier,
-    ])) {
-      //check if it has a translation
-      $node = array_pop($nodes);
-      $node = $this->getTranlatedEntity($node);
-      $url = $node->toUrl();
+  public function getSystemPageUrl(string $identifier): ?Url {
+    if ($node = $this->getNodeByIdentifier('page_system', $identifier)) {
+      try {
+        return $node->toUrl();
+      } catch (\Exception $e) {
+        \Drupal::logger('logger.channel.joinbox_library')->error($e);
+        return NULL;
+      }
     }
-    return $url;
+    return NULL;
+  }
+
+  /**
+   * @param string $identifier
+   *
+   * @return \Drupal\Core\GeneratedUrl|string|null
+   */
+  function getSystemPageUrlString(string $identifier): \Drupal\Core\GeneratedUrl|string|null {
+    return $this->getSystemPageUrl($identifier)?->toString();
+  }
+
+  /**
+   * @param string $nodeType
+   * @param string $identifier
+   *
+   * @return Node|null
+   */
+  public function getNodeByIdentifier(string $nodeType, string $identifier): ?Node {
+    try {
+      $nodes = \Drupal::entityTypeManager()->getStorage('node')->loadByProperties([
+        'type' => $nodeType,
+        'field_identifier' => $identifier,
+      ]);
+      $node = array_pop($nodes);
+      //check if it has a translation
+      return $this->getTranslatedEntity($node);
+    } catch (\Exception $e) {
+      \Drupal::logger('logger.channel.joinbox_library')->error($e);
+      return NULL;
+    }
   }
 
   /**
@@ -158,8 +202,8 @@ class HelperService {
    * @param $identifier
    *
    * @return \Drupal\Core\GeneratedUrl|string|null
-   * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
-   * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
+   *
+   * @deprecated use new \Drupal\joinbox_library\HelperService::getSystemPageUrlString instead
    */
   function getURLofStaticContentPage($identifier): \Drupal\Core\GeneratedUrl|string|null {
     return $this->getSystemPageUrl($identifier)?->toString();
@@ -172,7 +216,7 @@ class HelperService {
    *
    * @return array with url and text seperated | null
    */
-  function getCleanLinkArray($linkMarkupField) {
+  function getCleanLinkArray($linkMarkupField): array {
     $link = [];
     if (isset($linkMarkupField[0])) {
       $link['url'] = $linkMarkupField[0]['#url']->toString();
@@ -187,17 +231,17 @@ class HelperService {
   /**
    * Gets a rendered view in the desired viewmode
    *
-   * @param $viewname
+   * @param string $viewname
    * @param string $viewmode
    * @param bool $ajax
-   * @param array $args
+   * @param array|null $args
    *
    * @return array|null
    */
-  function getRenderedView($viewname, $viewmode = 'default', $ajax = FALSE, $args = NULL) {
+  function getRenderedView(string $viewname, string $viewmode = 'default', bool $ajax = FALSE, array $args = NULL): ?array {
     if ($view = Views::getView($viewname)) {
       $view->setDisplay($viewmode);
-      $args ? $view->setArguments($args) : NULL;
+      $args ?: $view->setArguments($args);
       return ($ajax ? $view->preview() : $view->render());
     }
 
