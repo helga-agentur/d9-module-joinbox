@@ -183,17 +183,19 @@ class HelperService {
    */
   public function getNodeByIdentifier(string $nodeType, string $identifier): ?Node {
     try {
-      $nodes = \Drupal::entityTypeManager()->getStorage('node')->loadByProperties([
+      if ($nodes = \Drupal::entityTypeManager()->getStorage('node')->loadByProperties([
         'type' => $nodeType,
         'field_identifier' => $identifier,
-      ]);
-      $node = array_pop($nodes);
-      //check if it has a translation
-      return $this->getTranslatedEntity($node);
+      ])) {
+        //check if it has a translation
+        $node = array_pop($nodes);
+        return $this->getTranslatedEntity($node);
+      }
     } catch (\Exception $e) {
       \Drupal::logger('logger.channel.joinbox_library')->error($e);
       return NULL;
     }
+    return NULL;
   }
 
   /**
@@ -241,7 +243,7 @@ class HelperService {
   function getRenderedView(string $viewname, string $viewmode = 'default', bool $ajax = FALSE, array $args = NULL): ?array {
     if ($view = Views::getView($viewname)) {
       $view->setDisplay($viewmode);
-      $args ?: $view->setArguments($args);
+      $args ? $view->setArguments($args) : NULL;
       return ($ajax ? $view->preview() : $view->render());
     }
 
