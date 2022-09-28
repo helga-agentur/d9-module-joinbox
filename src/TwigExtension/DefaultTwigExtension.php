@@ -3,6 +3,7 @@
 namespace Drupal\joinbox_library\TwigExtension;
 
 use Drupal\components\Template\Loader\ComponentsLoader;
+use Drupal\Core\Url;
 use Drupal\joinbox_library\HelperService;
 use Twig\Extension\AbstractExtension;
 use Twig\TwigFunction;
@@ -41,6 +42,7 @@ class DefaultTwigExtension extends AbstractExtension {
       new TwigFunction('isLoggedIn', [$this, 'isLoggedIn']),
       new TwigFunction('addClasses', [$this, 'addClasses']),
       new TwigFunction('fileExists', [$this, 'fileExists']),
+      new TwigFunction('frontPage', [$this, 'frontPage']),
     ];
   }
 
@@ -139,6 +141,13 @@ class DefaultTwigExtension extends AbstractExtension {
      */
     $componentsLoader = \Drupal::service('components.twig.loader');
     return $componentsLoader->exists($filename);
+  }
+
+  /**
+   * @return Url front page url
+   */
+  public function frontPage() {
+    return Url::fromRoute('<front>');
   }
 
 }
