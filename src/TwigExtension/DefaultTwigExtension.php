@@ -42,7 +42,7 @@ class DefaultTwigExtension extends AbstractExtension {
       new TwigFunction('isLoggedIn', [$this, 'isLoggedIn']),
       new TwigFunction('addClasses', [$this, 'addClasses']),
       new TwigFunction('fileExists', [$this, 'fileExists']),
-      new TwigFunction('frontPage', [$this, 'frontPageUrl']),
+      new TwigFunction('frontPageUrl', [$this, 'frontPageUrl']),
     ];
   }
 
@@ -146,7 +146,7 @@ class DefaultTwigExtension extends AbstractExtension {
   /**
    * @return Url front page url
    */
-  public function frontPage() {
+  public function frontPageUrl() {
     return Url::fromRoute('<front>');
   }
 
