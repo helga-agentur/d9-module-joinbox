@@ -30,6 +30,8 @@ class HelperService {
    * @return node or null
    */
   function getReferencedEntity($entityreference) {
+    if (!$entityreference) return null;
+    
     $referencedItems = $entityreference->referencedEntities();
     return (sizeof($referencedItems) > 0) ? $referencedItems[0] : NULL;
   }
