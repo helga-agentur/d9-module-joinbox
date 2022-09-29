@@ -42,7 +42,7 @@ class DefaultTwigExtension extends AbstractExtension {
       new TwigFunction('isLoggedIn', [$this, 'isLoggedIn']),
       new TwigFunction('addClasses', [$this, 'addClasses']),
       new TwigFunction('fileExists', [$this, 'fileExists']),
-      new TwigFunction('frontPage', [$this, 'frontPage']),
+      new TwigFunction('frontPage', [$this, 'frontPageUrl']),
     ];
   }
 
