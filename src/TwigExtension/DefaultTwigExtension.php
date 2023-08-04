@@ -6,8 +6,8 @@ use Drupal\components\Template\Loader\ComponentsLoader;
 use Drupal\Core\Url;
 use Drupal\joinbox_library\HelperService;
 use Twig\Extension\AbstractExtension;
+use Twig\TwigFilter;
 use Twig\TwigFunction;
-use Twig_SimpleFilter;
 
 /**
  * Class DefaultTwigExtension.
@@ -48,7 +48,7 @@ class DefaultTwigExtension extends AbstractExtension {
 
   public function getFilters() {
     return [
-      new Twig_SimpleFilter('highlightSearchTermInText', array($this, 'highlightSearchTermInText'))
+      new TwigFilter('highlightSearchTermInText', array($this, 'highlightSearchTermInText'))
     ];
   }
 
