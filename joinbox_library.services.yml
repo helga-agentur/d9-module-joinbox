@@ -1,10 +1,4 @@
 services:
-  logger.channel.joinbox_library:
-    parent: logger.channel_base
-    arguments: ['joinbox_library']
-  joinbox_library.helpers:
-    class: Drupal\joinbox_library\HelperService
-    arguments: []
   joinbox_library.twig_extensions:
     class: Drupal\joinbox_library\TwigExtension\DefaultTwigExtension
     arguments: []
