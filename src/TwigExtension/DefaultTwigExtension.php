@@ -7,7 +7,7 @@ use Drupal\Core\Url;
 use Drupal\joinbox_library\HelperService;
 use Twig\Extension\AbstractExtension;
 use Twig\TwigFunction;
-use \Twig\TwigFilter;
+use Twig\TwigFilter;
 
 /**
  * Class DefaultTwigExtension.
