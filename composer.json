@@ -1,0 +1,14 @@
+{
+  "name": "joinbox/d9-module-joinbox",
+  "description": "This module contains some useful twig functions",
+  "type": "drupal-module",
+  "license": "GPL-2.0-or-later",
+  "authors": [
+    {
+      "name": "Joinbox",
+      "email": "support@joinbox.com"
+    }
+  ],
+  "minimum-stability": "stable",
+  "require": {}
+}
