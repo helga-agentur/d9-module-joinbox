@@ -5,8 +5,8 @@ namespace Drupal\joinbox_library\TwigExtension;
 use Drupal\components\Template\Loader\ComponentsLoader;
 use Drupal\Core\Url;
 use Twig\Extension\AbstractExtension;
-use Twig\TwigFunction;
 use Twig\TwigFilter;
+use Twig\TwigFunction;
 
 /**
  * Class DefaultTwigExtension.
