@@ -26,10 +26,8 @@ class DefaultTwigExtension extends AbstractExtension {
   public function getFunctions() {
     return [
       new TwigFunction('getLanguageCode', [$this, 'getLanguageCode']),
-      new TwigFunction('isLoggedIn', [$this, 'isLoggedIn']),
       new TwigFunction('addClasses', [$this, 'addClasses']),
       new TwigFunction('fileExists', [$this, 'fileExists']),
-      new TwigFunction('frontPageUrl', [$this, 'frontPageUrl']),
     ];
   }
 
