@@ -99,15 +99,6 @@ class DefaultTwigExtension extends AbstractExtension {
   }
 
   /**
-   *
-   * Check if user is logged in
-   * @return bool
-   */
-  public function isLoggedIn() {
-    return \Drupal::currentUser()->isAuthenticated();
-  }
-
-  /**
    * Joins an array of class names to a string
    * @param array $classes
    * @return string
@@ -128,13 +119,6 @@ class DefaultTwigExtension extends AbstractExtension {
      */
     $componentsLoader = \Drupal::service('components.twig.loader');
     return $componentsLoader->exists($filename);
-  }
-
-  /**
-   * @return Url front page url
-   */
-  public function frontPageUrl() {
-    return Url::fromRoute('<front>');
   }
 
 }
