@@ -1,5 +1,5 @@
 name: 'Joinbox Library'
 type: module
-description: 'This module contains some useful functions'
+description: 'This module contains some useful twig functions'
 core_version_requirement: ^8 || ^9 || ^10
 package: 'Joinbox'
