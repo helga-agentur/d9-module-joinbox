@@ -53,6 +53,12 @@ class DefaultTwigExtension extends AbstractExtension {
 	}
 
 	public function sanitizeHTML($content) {
+    // sometimes $content is an array
+    // in these cases we need to get the #markup value of the array
+    if (is_array($content) && array_key_exists('#markup', $content)) {
+      return strip_tags($content['#markup']);
+    }
+
 		return strip_tags($content);
 	}
 
