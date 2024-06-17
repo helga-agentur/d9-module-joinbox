@@ -75,24 +75,32 @@ class DefaultTwigExtension extends AbstractExtension {
 	}
 
 	public function highlightSearchTerm($str, $search) {
+    $newString = $str;
+    if (!empty($search)) {
+      $occurrences = substr_count(strtolower($str), strtolower($search));
+      $match = [];
 
-		$occurrences    = substr_count(strtolower($str), strtolower($search));
-		$newstring      = $str;
-		$match          = array();
+      for ($i = 0; $i < $occurrences; $i++) {
 
-		for ($i = 0; $i < $occurrences; $i++) {
+        $match[$i] = stripos($str, $search, $i);
+        $match[$i] = substr($str, $match[$i], strlen($search));
+        $newstring = str_replace($match[$i], '[#]' . $match[$i] . '[@]', $newstring);
+      }
 
-			$match[$i] = stripos($str, $search, $i);
-			$match[$i] = substr($str, $match[$i], strlen($search));
-			$newstring = str_replace($match[$i], '[#]'.$match[$i].'[@]', $newstring);
-		}
+      $newString = preg_replace(
+        '/(\[#\])+/',
+        '<span class="marked">',
+        $newString
+      );
+      $newString = preg_replace(
+        '/(\[@\])+/',
+        '</span>',
+        $newString
+      );
+    }
 
-		$newstring = preg_replace('/(\[#\])+/', '<span class="marked">', $newstring);// str_replace('[#]', '<span class="marked">', $newstring);
-		$newstring = preg_replace('/(\[@\])+/', '</span>', $newstring); // str_replace('[@]', '</span>', $newstring);
-
-		return $newstring;
-	}
-
+    return $newString;
+  }
   /**
    * Get the language code
    *
