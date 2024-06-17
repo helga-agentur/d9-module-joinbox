@@ -84,7 +84,7 @@ class DefaultTwigExtension extends AbstractExtension {
 
         $match[$i] = stripos($str, $search, $i);
         $match[$i] = substr($str, $match[$i], strlen($search));
-        $newstring = str_replace($match[$i], '[#]' . $match[$i] . '[@]', $newstring);
+        $newString = str_replace($match[$i], '[#]' . $match[$i] . '[@]', $newString);
       }
 
       $newString = preg_replace(
