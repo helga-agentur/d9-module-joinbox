@@ -1,5 +1,5 @@
 name: 'Joinbox Library'
 type: module
 description: 'This module contains some useful functions'
-core_version_requirement: ^8 || ^9
+core_version_requirement: ^9 || ^10
 package: 'Joinbox'
