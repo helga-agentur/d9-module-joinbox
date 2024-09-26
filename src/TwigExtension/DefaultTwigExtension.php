@@ -59,6 +59,8 @@ class DefaultTwigExtension extends AbstractExtension {
           return strip_tags($content['#markup']);
         }
 
+        // sometimes $content is missing markup
+        // in these cases we need to return NULL
         if (is_array($content)) {
            return NULL;
         }
